@@ -1,0 +1,316 @@
+{
+  "name": "Salesforce Enterprise Patterns",
+  "version": "3.0",
+  "description": "AI-powered development mode for Salesforce Enterprise Patterns (fflib-apex-common), Lightning Web Components, and External API Integration with automated code generation, review, and best practices enforcement",
+  "author": "Salesforce Development Team",
+  "capabilities": {
+    "apex_enterprise_patterns": {
+      "description": "Generate and review Apex code following Enterprise Pattern architecture",
+      "features": [
+        "Generate Domain classes extending fflib_SObjectDomain",
+        "Create Selector classes with optimized SOQL queries", 
+        "Build Service classes for complex business logic orchestration",
+        "Generate proper trigger implementations with Domain delegation",
+        "Create Unit of Work pattern implementations",
+        "Generate Application Factory configurations",
+        "Validate Enterprise Pattern compliance"
+      ]
+    },
+    "external_api_integration": {
+      "description": "Generate and manage external API integrations using openapi-generator and best practices",
+      "features": [
+        "Generate Apex client code from OpenAPI/Swagger specifications",
+        "Create secure API configuration management classes",
+        "Build retry logic and error handling patterns",
+        "Implement caching strategies (Platform Cache and custom objects)",
+        "Generate bulk API processing patterns",
+        "Create asynchronous processing with Queueable pattern",
+        "Build comprehensive API testing with mock frameworks",
+        "Generate API controller classes for LWC integration",
+        "Implement data transformation between external and internal models",
+        "Create monitoring and logging infrastructure"
+      ]
+    },
+    "lightning_web_components": {
+      "description": "Generate and review Lightning Web Components following official Salesforce patterns",
+      "features": [
+        "Generate LWC components with proper file structure (.js, .html, .js-meta.xml, .css)",
+        "Implement @wire patterns for reactive data access",
+        "Create Lightning Data Service (LDS) integrations",
+        "Build component communication patterns (parent-child, sibling)",
+        "Generate proper error handling and user feedback",
+        "Create Jest test suites with mocking patterns",
+        "Implement accessibility and performance best practices",
+        "Generate message channel configurations for sibling communication",
+        "Create reusable utility components and services",
+        "Build API-integrated components with proper controller patterns"
+      ]
+    },
+    "automated_code_review": {
+      "description": "Analyze code against Salesforce best practices and enterprise patterns",
+      "review_categories": [
+        "Enterprise Pattern Compliance (Domain, Service, Selector, UoW)",
+        "External API Integration Standards",
+        "Lightning Web Components Standards",
+        "Governor Limits & Bulkification",
+        "Security & Field-Level Permissions", 
+        "Testing Coverage & Quality",
+        "Performance Optimization",
+        "Code Maintainability",
+        "Documentation Standards",
+        "Salesforce Platform Best Practices"
+      ]
+    },
+    "intelligent_refactoring": {
+      "description": "Migrate legacy code to enterprise patterns and modern practices",
+      "refactoring_types": [
+        "Legacy triggers to Enterprise Pattern Domain classes",
+        "Direct SOQL to Selector pattern implementation",
+        "Manual HTTP callouts to openapi-generated clients",
+        "Aura components to Lightning Web Components",
+        "Custom CRUD operations to Lightning Data Service",
+        "Manual DML to Unit of Work pattern",
+        "Legacy error handling to modern patterns",
+        "Procedural code to object-oriented enterprise patterns",
+        "Synchronous API calls to asynchronous patterns"
+      ]
+    },
+    "template_integration": {
+      "description": "Pre-built templates for rapid development",
+      "available_templates": {
+        "apex_enterprise": [
+          "Domain Class Template",
+          "Selector Class Template", 
+          "Service Class Template",
+          "Custom Trigger Template",
+          "Test Class Template",
+          "Application Factory Configuration"
+        ],
+        "external_api": [
+          "API Service Layer Template",
+          "API Configuration Management Template",
+          "API Client Wrapper Template",
+          "API Caching Service Template",
+          "API Error Handling Template",
+          "API Mock Testing Template",
+          "Bulk API Processor Template",
+          "Async API Processor Template"
+        ],
+        "lightning_web_components": [
+          "Basic LWC Component Bundle",
+          "Data Display Component (with @wire)",
+          "Form Component (with LDS)",
+          "Communication Component (events)",
+          "API-Integrated Component Template",
+          "Utility Component Template",
+          "Jest Test Suite Template",
+          "Error Handling Component",
+          "Message Channel Configuration"
+        ]
+      }
+    }
+  },
+  "ai_instructions": {
+    "core_principles": [
+      "Always follow Enterprise Pattern architecture (Domain, Service, Selector, Unit of Work)",
+      "Integrate external APIs through Service layer with proper abstraction",
+      "Use openapi-generator for type-safe API client generation",
+      "Enforce separation of concerns across all layers",
+      "Prioritize bulkification and governor limit compliance",
+      "Use Lightning Web Components over Aura for new development",
+      "Prefer Lightning Data Service over custom Apex for CRUD operations",
+      "Implement comprehensive error handling and user feedback",
+      "Follow security best practices (USER_MODE, field-level security, secure API credentials)",
+      "Generate maintainable, well-documented, and testable code",
+      "Optimize for performance and scalability"
+    ],
+    "code_generation_guidelines": {
+      "apex_classes": [
+        "All classes must have comprehensive ApexDoc comments",
+        "Use explicit USER_MODE or SYSTEM_MODE instead of with/without sharing",
+        "Implement proper exception handling with user-friendly messages",
+        "Follow bulkification patterns for all operations",
+        "Use constants for all hardcoded values",
+        "Implement proper test coverage with ApexMocks",
+        "Follow naming conventions and code organization standards"
+      ],
+      "external_api_integration": [
+        "Use openapi-generator for all documented APIs",
+        "Store API credentials in Protected Custom Settings or Named Credentials",
+        "Implement comprehensive error handling with retry logic",
+        "Create Service layer abstraction for all API operations",
+        "Implement appropriate caching strategies",
+        "Use asynchronous processing for bulk API operations",
+        "Create mock implementations for comprehensive testing",
+        "Implement data transformation between external and internal models",
+        "Add monitoring and logging for API usage and performance",
+        "Respect API rate limits and implement throttling"
+      ],
+      "lightning_web_components": [
+        "Generate complete component bundles (.js, .html, .js-meta.xml)",
+        "Use @wire for reactive data access patterns",
+        "Call external APIs through dedicated Apex controller methods",
+        "Implement proper parent-child communication with @api and CustomEvents",
+        "Use Lightning Message Service for sibling component communication",
+        "Prefer static schema imports for referential integrity",
+        "Implement in-place error handling over toast notifications",
+        "Generate comprehensive Jest tests with proper mocking",
+        "Follow accessibility guidelines and performance best practices",
+        "Use semantic HTML and proper SLDS styling"
+      ]
+    },
+    "review_criteria": {
+      "enterprise_patterns": [
+        "Verify Domain classes handle all business logic and validation",
+        "Ensure Selector classes encapsulate all SOQL queries",
+        "Check Service classes orchestrate multi-object operations properly",
+        "Validate triggers only contain delegation logic",
+        "Confirm Unit of Work pattern usage for all DML operations",
+        "Verify Application Factory usage for object instantiation"
+      ],
+      "external_api_integration": [
+        "Check usage of openapi-generator for documented APIs",
+        "Verify secure storage of API credentials and configuration",
+        "Validate comprehensive error handling and retry logic",
+        "Ensure Service layer abstraction for API operations",
+        "Check implementation of appropriate caching strategies",
+        "Verify asynchronous processing for bulk operations",
+        "Validate mock testing coverage for API integrations",
+        "Check data transformation patterns",
+        "Verify rate limiting and throttling implementation"
+      ],
+      "lightning_web_components": [
+        "Check proper file structure and naming conventions",
+        "Validate @wire usage over imperative calls where appropriate",
+        "Ensure Lightning Data Service usage for CRUD operations",
+        "Verify proper component communication patterns",
+        "Check error handling implementation",
+        "Validate Jest test coverage and quality",
+        "Ensure accessibility compliance",
+        "Check performance optimization implementation",
+        "Verify API integration through controller patterns"
+      ],
+      "security_compliance": [
+        "Verify field-level security implementation",
+        "Check proper USER_MODE/SYSTEM_MODE usage",
+        "Validate input sanitization and CRUD permissions",
+        "Ensure CSP compliance in LWC components",
+        "Check secure API credential storage",
+        "Verify proper error message handling (no sensitive data exposure)"
+      ]
+    }
+  },
+  "integration": {
+    "salesforce_cli": {
+      "commands": [
+        "sf project generate",
+        "sf apex generate class",
+        "sf lightning generate component",
+        "sf data import tree",
+        "sf org create scratch",
+        "sf project deploy start"
+      ]
+    },
+    "external_tools": {
+      "openapi_generator": [
+        "openapi-generator generate -g apex",
+        "openapi-generator validate",
+        "openapi-generator config-help -g apex"
+      ],
+      "api_testing": [
+        "Postman collection generation",
+        "Swagger UI integration",
+        "API response validation"
+      ]
+    },
+    "testing_frameworks": [
+      "ApexMocks for Apex unit testing",
+      "Jest for Lightning Web Components testing",
+      "@sa11y for accessibility testing",
+      "API mock frameworks for external integrations",
+      "Salesforce Test Data Factory patterns"
+    ],
+    "development_tools": [
+      "Salesforce Extensions for VS Code",
+      "LWC Local Development Server", 
+      "Salesforce CLI (sf)",
+      "openapi-generator CLI",
+      "Apex PMD for code quality",
+      "ESLint with @salesforce/eslint-config-lwc"
+    ]
+  },
+  "validation_rules": {
+    "pre_commit_checks": [
+      "Enterprise Pattern compliance validation",
+      "External API integration pattern verification",
+      "LWC component structure verification",
+      "Governor limit analysis",
+      "Security review (FLS, CRUD permissions, API credentials)",
+      "Test coverage verification (>75%)",
+      "Code quality checks (PMD, ESLint)",
+      "Documentation completeness check"
+    ],
+    "deployment_gates": [
+      "All tests must pass",
+      "Code coverage >75% for Apex classes",
+      "Jest tests >80% coverage for LWC components",
+      "API mock tests cover all integration scenarios",
+      "No high-severity security violations",
+      "Performance optimization review complete",
+      "Accessibility compliance verified",
+      "API rate limiting implementation verified"
+    ]
+  },
+  "sample_prompts": {
+    "apex_enterprise_patterns": [
+      "Generate an Account Domain class with validation rules for account hierarchy and ownership changes",
+      "Create a ContactService class that handles complex contact assignment logic across multiple objects",
+      "Build a comprehensive OpportunitySelector with methods for various business scenarios",
+      "Generate a proper trigger for Case object that delegates all logic to CaseDomain",
+      "Create a Unit of Work implementation for a complex multi-object business process"
+    ],
+    "external_api_integration": [
+      "Generate an API client from this OpenAPI specification using openapi-generator",
+      "Create a Service class that integrates with the generated PetStore API client",
+      "Build a comprehensive API caching strategy using Platform Cache",
+      "Generate an asynchronous processor for bulk API operations using Queueable",
+      "Create a complete testing suite with mocks for external API integration",
+      "Build an API configuration management class using Custom Settings",
+      "Generate error handling and retry logic for external API calls",
+      "Create data transformation methods between external API models and Salesforce objects"
+    ],
+    "lightning_web_components": [
+      "Create a contact search component with @wire integration and proper error handling",
+      "Build a record form component using Lightning Data Service with custom validation",
+      "Generate a parent-child component communication example with CustomEvents",
+      "Create a data table component with sorting, filtering, and pagination",
+      "Build a file upload component with progress tracking and error handling",
+      "Generate a Lightning Message Service implementation for sibling component communication",
+      "Create an API-integrated component that displays external data with proper error handling"
+    ],
+    "migration_assistance": [
+      "Convert this Aura component to Lightning Web Component following best practices",
+      "Migrate this legacy trigger to Enterprise Pattern Domain class implementation",
+      "Refactor this direct SOQL query into proper Selector pattern",
+      "Convert this manual DML operation to Unit of Work pattern",
+      "Modernize this error handling to follow current LWC best practices",
+      "Migrate manual HTTP callouts to openapi-generated client implementation",
+      "Convert synchronous API processing to asynchronous pattern with proper error handling"
+    ]
+  },
+  "next_steps": {
+    "expansion_opportunities": [
+      "Integration with Flow and Process Builder patterns",
+      "Platform Events and Change Data Capture patterns",
+      "Einstein Analytics and AI integration patterns", 
+      "Mobile-first Lightning Web Component patterns",
+      "Salesforce DX and DevOps automation patterns",
+      "Multi-org deployment and configuration management",
+      "Performance monitoring and optimization tools",
+      "Advanced testing strategies and continuous integration",
+      "API versioning and backward compatibility strategies",
+      "Microservices integration patterns",
+      "Event-driven architecture with Platform Events"
+    ]
+  }
+} 

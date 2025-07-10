@@ -1,0 +1,1071 @@
+{
+  "title": "Salesforce Development Rules",
+  "version": "3.0",
+  "last_updated": "2024-12-19",
+  "categories": {
+    "enterprise_patterns": {
+      "description": "Core fflib-apex-common enterprise patterns enforcement",
+      "rules": [
+        {
+          "id": "no-business-logic-in-triggers",
+          "severity": "error",
+          "description": "Triggers should only contain delegation logic to Domain classes. All business logic must be implemented in Domain classes extending fflib_SObjectDomain.",
+          "pattern": "Never place business logic directly inside Apex Triggers. Always delegate to Domain classes.",
+          "example_violation": "Business logic directly in triggers",
+          "example_fix": "Delegate business logic to Domain classes"
+        },
+        {
+          "id": "use-domain-pattern",
+          "severity": "error",
+          "description": "Create Domain classes for each SObject to encapsulate business logic and validation rules.",
+          "pattern": "Always use Domain classes extending fflib_SObjectDomain for business logic and validation.",
+          "example_violation": "Business logic directly in triggers or selectors",
+          "example_fix": "Implement business logic in Domain classes"
+        },
+        {
+          "id": "use-selector-pattern",
+          "severity": "error",
+          "description": "Never write SOQL queries directly in business logic. Create Selector classes for centralized data access.",
+          "pattern": "Always encapsulate SOQL queries in Selector classes extending fflib_SObjectSelector.",
+          "example_violation": "SOQL queries directly in business logic",
+          "example_fix": "Encapsulate SOQL queries in Selector classes"
+        },
+        {
+          "id": "use-service-pattern",
+          "severity": "warning",
+          "description": "Create Service classes to orchestrate business operations that span multiple SObjects or require complex logic.",
+          "pattern": "Always orchestrate complex business operations through Service classes.",
+          "example_violation": "Complex business logic directly in triggers or selectors",
+          "example_fix": "Delegate complex logic to Service classes"
+        },
+        {
+          "id": "use-unit-of-work",
+          "severity": "error",
+          "description": "Use Unit of Work pattern for all DML operations to ensure proper transaction management and bulkification.",
+          "pattern": "Always use fflib_SObjectUnitOfWork for DML operations to manage transactions and bulkification.",
+          "example_violation": "DML operations directly in triggers or selectors",
+          "example_fix": "Use fflib_SObjectUnitOfWork"
+        },
+        {
+          "id": "no-soql-dml-in-loops",
+          "severity": "error",
+          "description": "SOQL and DML inside loops will cause governor limit exceptions. Use bulkification patterns instead.",
+          "pattern": "Never place SOQL queries or DML operations inside loops to avoid governor limits.",
+          "example_violation": "SOQL/DML in loops",
+          "example_fix": "Use bulkification patterns"
+        },
+        {
+          "id": "use-user-system-mode",
+          "severity": "warning",
+          "description": "Use dataAccess constructors with explicit USER_MODE or SYSTEM_MODE for better performance and clearer intent.",
+          "pattern": "Always use explicit USER_MODE or SYSTEM_MODE instead of 'with sharing' or 'without sharing'.",
+          "example_violation": "Implicit 'with sharing' or 'without sharing'",
+          "example_fix": "Use explicit USER_MODE or SYSTEM_MODE"
+        },
+        {
+          "id": "bulkify-operations",
+          "severity": "error",
+          "description": "All Apex code must be bulkified to handle large data volumes without hitting governor limits.",
+          "pattern": "Always design Apex code to handle bulk operations (200+ records).",
+          "example_violation": "Apex code not bulkified",
+          "example_fix": "Design Apex code for bulk operations"
+        },
+        {
+          "id": "use-application-factory",
+          "severity": "warning",
+          "description": "Use Application.Service.newInstance(), Application.Domain.newInstance(), etc. for consistent object creation.",
+          "pattern": "Always use Application Factory pattern for instantiating Service, Domain, and Selector classes.",
+          "example_violation": "Manual object instantiation",
+          "example_fix": "Use Application Factory"
+        },
+        {
+          "id": "proper-exception-handling",
+          "severity": "warning",
+          "description": "Catch and handle exceptions appropriately with user-friendly error messages.",
+          "pattern": "Always implement proper exception handling with meaningful error messages.",
+          "example_violation": "Missing error handling",
+          "example_fix": "Implement proper exception handling"
+        },
+        {
+          "id": "use-constants",
+          "severity": "warning",
+          "description": "Define constants for all hardcoded values to improve maintainability and reduce errors.",
+          "pattern": "Always use constants for hardcoded values, field names, and error messages.",
+          "example_violation": "Hardcoded values",
+          "example_fix": "Define constants"
+        },
+        {
+          "id": "meaningful-variable-names",
+          "severity": "warning",
+          "description": "Variable names should clearly indicate their purpose and follow Salesforce naming conventions.",
+          "pattern": "Always use meaningful and descriptive variable names following camelCase convention.",
+          "example_violation": "Unclear variable names",
+          "example_fix": "Use meaningful variable names"
+        },
+        {
+          "id": "test-data-factory",
+          "severity": "warning",
+          "description": "Create reusable test data factories to ensure consistent and maintainable test data creation.",
+          "pattern": "Always use Test Data Factory pattern for creating test data.",
+          "example_violation": "Manual test data creation",
+          "example_fix": "Use Test Data Factory"
+        },
+        {
+          "id": "use-apex-mocks",
+          "severity": "warning",
+          "description": "Use ApexMocks to create proper unit tests with mocked dependencies.",
+          "pattern": "Always use ApexMocks for unit testing of enterprise patterns.",
+          "example_violation": "Testing without mocking",
+          "example_fix": "Use ApexMocks"
+        },
+        {
+          "id": "no-test-data-dependencies",
+          "severity": "error",
+          "description": "All tests must create their own test data to ensure reliability across different environments.",
+          "pattern": "Never create tests that depend on existing org data.",
+          "example_violation": "Tests depending on org data",
+          "example_fix": "Create tests with their own test data"
+        },
+        {
+          "id": "separation-of-concerns",
+          "severity": "error",
+          "description": "Each layer should have a single, well-defined responsibility.",
+          "pattern": "Always maintain proper separation of concerns: Controllers for UI, Services for orchestration, Domains for business logic, Selectors for data access.",
+          "example_violation": "Mixing responsibilities",
+          "example_fix": "Maintain proper separation of concerns"
+        },
+        {
+          "id": "lwc_component_responsibility",
+          "severity": "warning",
+          "description": "LWC components should have single responsibility and be reusable",
+          "pattern": "Components should focus on one specific UI concern",
+          "example_violation": "Mixing data access, UI logic, and business logic in one component",
+          "example_fix": "Separate into focused components with clear responsibilities"
+        },
+        {
+          "id": "lwc_naming_conventions",
+          "severity": "info",
+          "description": "Follow LWC naming conventions: camelCase, descriptive names",
+          "pattern": "Component names: myComponent, property names: recordId, method names: handleClick",
+          "example_violation": "PascalCase or unclear names",
+          "example_fix": "Use camelCase and descriptive names"
+        }
+      ]
+    },
+    "external_api_integration": {
+      "description": "External API integration patterns using openapi-generator and best practices",
+      "rules": [
+        {
+          "id": "use_openapi_generator",
+          "severity": "warning",
+          "description": "Use openapi-generator to create type-safe, auto-generated API clients from OpenAPI/Swagger specifications",
+          "pattern": "Generate client code rather than manually writing HTTP callouts",
+          "example_violation": "Manual HttpRequest/HttpResponse implementation for documented APIs",
+          "example_fix": "Use openapi-generator generate -g apex to create proper client classes"
+        },
+        {
+          "id": "api_service_layer_integration",
+          "severity": "error",
+          "description": "External API calls must be integrated through Service layer, never directly in Domain or LWC",
+          "pattern": "API integration should happen in Service classes with proper abstraction",
+          "example_violation": "Making API calls directly from Domain classes or LWC components",
+          "example_fix": "Create Service layer methods that handle API integration and data transformation"
+        },
+        {
+          "id": "secure_api_configuration",
+          "severity": "error",
+          "description": "API credentials and configuration must be stored securely using Custom Settings, Custom Metadata, or Named Credentials",
+          "pattern": "Never hardcode API keys, tokens, or URLs in code",
+          "example_violation": "String apiKey = 'sk_live_123456789'; in code",
+          "example_fix": "Use Custom Settings or Named Credentials for secure configuration storage"
+        },
+        {
+          "id": "api_error_handling",
+          "severity": "error",
+          "description": "All external API calls must implement comprehensive error handling with user-friendly messages",
+          "pattern": "Wrap API calls in try-catch blocks with meaningful error messages",
+          "example_violation": "API calls without error handling or generic exceptions",
+          "example_fix": "Implement try-catch with ExternalServiceException and user-friendly messages"
+        },
+        {
+          "id": "api_retry_logic",
+          "severity": "warning",
+          "description": "Implement retry logic with exponential backoff for transient API failures",
+          "pattern": "Use strategy pattern for retryable API operations",
+          "example_violation": "Single API call attempts without retry mechanism",
+          "example_fix": "Implement APIClientWrapper with configurable retry attempts and backoff"
+        },
+        {
+          "id": "api_response_caching",
+          "severity": "warning",
+          "description": "Implement appropriate caching strategy for API responses to optimize performance",
+          "pattern": "Use Platform Cache or custom object caching for frequently accessed data",
+          "example_violation": "Repeated API calls for the same data without caching",
+          "example_fix": "Implement cache-first pattern with configurable TTL"
+        },
+        {
+          "id": "api_bulk_processing",
+          "severity": "error",
+          "description": "API operations must be bulkified to handle multiple records efficiently",
+          "pattern": "Process API calls in batches, not individual records in loops",
+          "example_violation": "API calls inside for loops for individual records",
+          "example_fix": "Implement batch processing with configurable batch sizes"
+        },
+        {
+          "id": "api_async_processing",
+          "severity": "warning",
+          "description": "Use asynchronous processing (Queueable, Future, Batch) for bulk API operations",
+          "pattern": "Implement Queueable with Database.AllowsCallouts for API-heavy operations",
+          "example_violation": "Synchronous API processing for large data volumes",
+          "example_fix": "Use AsyncAPIProcessor pattern with Queueable for bulk operations"
+        },
+        {
+          "id": "api_timeout_configuration",
+          "severity": "warning",
+          "description": "Configure appropriate timeouts for API calls based on expected response times",
+          "pattern": "Set client timeout values based on API SLA and use case requirements",
+          "example_violation": "Using default timeouts for all API calls",
+          "example_fix": "Configure client.setTimeout() based on API endpoint characteristics"
+        },
+        {
+          "id": "api_testing_mocks",
+          "severity": "error",
+          "description": "All external API integrations must have comprehensive test coverage using mock frameworks",
+          "pattern": "Create mock implementations of generated API clients for testing",
+          "example_violation": "Tests that make actual API calls or lack API test coverage",
+          "example_fix": "Implement MockOASPetApi pattern for comprehensive test coverage"
+        },
+        {
+          "id": "api_data_transformation",
+          "severity": "warning",
+          "description": "Implement proper data transformation between external API models and Salesforce objects",
+          "pattern": "Create conversion methods that map external API responses to internal domain models",
+          "example_violation": "Direct assignment of external API fields to Salesforce objects",
+          "example_fix": "Implement convertToDomainModel() methods with proper field mapping"
+        },
+        {
+          "id": "api_versioning_strategy",
+          "severity": "info",
+          "description": "Plan for API versioning and backward compatibility in client implementations",
+          "pattern": "Include API version in configuration and handle version-specific logic",
+          "example_violation": "Hardcoded API versions or no version handling",
+          "example_fix": "Configure API version in settings and implement version-aware client code"
+        },
+        {
+          "id": "api_rate_limit_respect",
+          "severity": "warning",
+          "description": "Implement rate limiting awareness to respect external API limits",
+          "pattern": "Monitor API usage and implement throttling when approaching limits",
+          "example_violation": "Making API calls without considering rate limits",
+          "example_fix": "Implement rate limit tracking and intelligent request throttling"
+        },
+        {
+          "id": "api_monitoring_logging",
+          "severity": "info",
+          "description": "Implement comprehensive logging and monitoring for API usage and performance",
+          "pattern": "Log API calls, response times, error rates, and usage patterns",
+          "example_violation": "No logging or monitoring of API integration health",
+          "example_fix": "Add structured logging for API metrics and error tracking"
+        }
+      ]
+    },
+    "lightning_web_components": {
+      "description": "Lightning Web Components patterns and best practices",
+      "rules": [
+        {
+          "id": "lwc_file_structure",
+          "severity": "error",
+          "description": "LWC components must follow proper file structure: .js, .html, .js-meta.xml, optional .css, and __tests__/ folder",
+          "pattern": "Component folders should contain: componentName.js, componentName.html, componentName.js-meta.xml",
+          "example_violation": "Missing .js-meta.xml file or incorrect naming",
+          "example_fix": "Ensure all required files are present with matching component name"
+        },
+        {
+          "id": "lwc_wire_preferred",
+          "severity": "warning",
+          "description": "Prefer @wire over imperative Apex calls for reactive data access",
+          "pattern": "Use @wire for data that should react to parameter changes",
+          "example_violation": "Using imperative Apex call when @wire would be more appropriate",
+          "example_fix": "@wire(getContactList) contacts; instead of calling imperatively"
+        },
+        {
+          "id": "lwc_lds_over_apex",
+          "severity": "warning",
+          "description": "Use Lightning Data Service (LDS) functions over custom Apex for CRUD operations",
+          "pattern": "Use createRecord, updateRecord, deleteRecord from lightning/uiRecordApi",
+          "example_violation": "Creating custom Apex for simple record creation",
+          "example_fix": "import { createRecord } from 'lightning/uiRecordApi'; then use createRecord()"
+        },
+        {
+          "id": "lwc_static_schema_imports",
+          "severity": "warning",
+          "description": "Prefer static schema imports over dynamic field references for referential integrity",
+          "pattern": "import FIELD_NAME from '@salesforce/schema/Object.Field'",
+          "example_violation": "Using string field names: 'Contact.Name'",
+          "example_fix": "import NAME_FIELD from '@salesforce/schema/Contact.Name'"
+        },
+        {
+          "id": "lwc_custom_events_proper",
+          "severity": "error",
+          "description": "Use CustomEvent for child-to-parent communication with proper configuration",
+          "pattern": "new CustomEvent('eventname', { detail: data, bubbles: false, composed: false })",
+          "example_violation": "Using Event instead of CustomEvent or incorrect bubble/composed values",
+          "example_fix": "Always use CustomEvent with bubbles: false, composed: false by default"
+        },
+        {
+          "id": "lwc_api_decorators",
+          "severity": "error",
+          "description": "Use @api decorator for public properties and methods in child components",
+          "pattern": "@api propertyName; or @api methodName() {}",
+          "example_violation": "Public properties without @api decorator",
+          "example_fix": "Add @api decorator: @api recordId;"
+        },
+        {
+          "id": "lwc_error_handling_inline",
+          "severity": "warning",
+          "description": "Implement in-place error handling rather than toast/modal for component loading errors",
+          "pattern": "Display errors within component template using conditional rendering",
+          "example_violation": "Showing toast messages for data loading errors",
+          "example_fix": "Use <template if:true={error}><c-error-panel></template>"
+        },
+        {
+          "id": "lwc_lifecycle_methods",
+          "severity": "info",
+          "description": "Implement proper lifecycle management (connectedCallback, disconnectedCallback)",
+          "pattern": "Clean up event listeners and subscriptions in disconnectedCallback",
+          "example_violation": "Not cleaning up event listeners",
+          "example_fix": "Remove event listeners in disconnectedCallback()"
+        },
+        {
+          "id": "lwc_message_service_siblings",
+          "severity": "warning",
+          "description": "Use Lightning Message Service for sibling component communication, not for parent-child",
+          "pattern": "Use publish/subscribe pattern only for components in flexipages",
+          "example_violation": "Using pubsub for parent-child communication",
+          "example_fix": "Use @api properties/methods and CustomEvents for parent-child"
+        },
+        {
+          "id": "lwc_async_await_preferred",
+          "severity": "info",
+          "description": "Use async/await over promise chains for better readability",
+          "pattern": "async handleMethod() { try { const result = await methodCall(); } catch (error) {} }",
+          "example_violation": "Using .then().catch() chains",
+          "example_fix": "Convert to async/await pattern"
+        },
+        {
+          "id": "lwc_conditional_rendering",
+          "severity": "info",
+          "description": "Use if:true and if:false for conditional rendering instead of CSS display",
+          "pattern": "<template if:true={condition}> or <template if:false={condition}>",
+          "example_violation": "Using style='display: none' for hiding elements",
+          "example_fix": "Use template if:true/if:false directives"
+        },
+        {
+          "id": "lwc_jest_testing_required",
+          "severity": "warning",
+          "description": "Every LWC component must have comprehensive Jest tests",
+          "pattern": "Component __tests__/componentName.test.js with meaningful test cases",
+          "example_violation": "Missing test files or insufficient test coverage",
+          "example_fix": "Create Jest tests covering component rendering and user interactions"
+        },
+        {
+          "id": "lwc_no_inline_scripts",
+          "severity": "error",
+          "description": "Never use inline scripts - violates CSP (Content Security Policy)",
+          "pattern": "All JavaScript must be in component .js files or static resources",
+          "example_violation": "onclick='javascript:...' in templates",
+          "example_fix": "Use event handlers in component JavaScript"
+        },
+        {
+          "id": "lwc_proper_imports",
+          "severity": "error",
+          "description": "Use proper import syntax for LWC platform features",
+          "pattern": "import { LightningElement, api, track, wire } from 'lwc';",
+          "example_violation": "Incorrect import paths or missing decorators",
+          "example_fix": "Use standard LWC import patterns"
+        },
+        {
+          "id": "lwc_form_component_hierarchy",
+          "severity": "info",
+          "description": "Follow form component hierarchy: lightning-record-form > record-edit-form > @wire(getRecord)",
+          "pattern": "Use simplest form component that meets requirements",
+          "example_violation": "Using complex @wire(getRecord) when lightning-record-form would suffice",
+          "example_fix": "Start with lightning-record-form and move down hierarchy only if needed"
+        },
+        {
+          "id": "lwc_api_controller_pattern",
+          "severity": "warning",
+          "description": "LWC components should call external APIs through dedicated Apex controller methods, not directly",
+          "pattern": "Create @AuraEnabled methods that delegate to Service layer for API calls",
+          "example_violation": "Making HTTP callouts directly from LWC JavaScript",
+          "example_fix": "Create PetController.getAvailablePets() that delegates to PetService"
+        }
+      ]
+    },
+    "governor_limits": {
+      "description": "Salesforce governor limits and bulkification",
+      "rules": [
+        {
+          "id": "no-business-logic-in-triggers",
+          "severity": "error",
+          "description": "Triggers should only contain delegation logic to Domain classes. All business logic must be implemented in Domain classes extending fflib_SObjectDomain.",
+          "pattern": "Never place business logic directly inside Apex Triggers. Always delegate to Domain classes.",
+          "example_violation": "Business logic directly in triggers",
+          "example_fix": "Delegate business logic to Domain classes"
+        },
+        {
+          "id": "use-domain-pattern",
+          "severity": "error",
+          "description": "Create Domain classes for each SObject to encapsulate business logic and validation rules.",
+          "pattern": "Always use Domain classes extending fflib_SObjectDomain for business logic and validation.",
+          "example_violation": "Business logic directly in triggers or selectors",
+          "example_fix": "Implement business logic in Domain classes"
+        },
+        {
+          "id": "use-selector-pattern",
+          "severity": "error",
+          "description": "Never write SOQL queries directly in business logic. Create Selector classes for centralized data access.",
+          "pattern": "Always encapsulate SOQL queries in Selector classes extending fflib_SObjectSelector.",
+          "example_violation": "SOQL queries directly in business logic",
+          "example_fix": "Encapsulate SOQL queries in Selector classes"
+        },
+        {
+          "id": "use-service-pattern",
+          "severity": "warning",
+          "description": "Create Service classes to orchestrate business operations that span multiple SObjects or require complex logic.",
+          "pattern": "Always orchestrate complex business operations through Service classes.",
+          "example_violation": "Complex business logic directly in triggers or selectors",
+          "example_fix": "Delegate complex logic to Service classes"
+        },
+        {
+          "id": "use-unit-of-work",
+          "severity": "error",
+          "description": "Use Unit of Work pattern for all DML operations to ensure proper transaction management and bulkification.",
+          "pattern": "Always use fflib_SObjectUnitOfWork for DML operations to manage transactions and bulkification.",
+          "example_violation": "DML operations directly in triggers or selectors",
+          "example_fix": "Use fflib_SObjectUnitOfWork"
+        },
+        {
+          "id": "no-soql-dml-in-loops",
+          "severity": "error",
+          "description": "SOQL and DML inside loops will cause governor limit exceptions. Use bulkification patterns instead.",
+          "pattern": "Never place SOQL queries or DML operations inside loops to avoid governor limits.",
+          "example_violation": "SOQL/DML in loops",
+          "example_fix": "Use bulkification patterns"
+        },
+        {
+          "id": "use-user-system-mode",
+          "severity": "warning",
+          "description": "Use dataAccess constructors with explicit USER_MODE or SYSTEM_MODE for better performance and clearer intent.",
+          "pattern": "Always use explicit USER_MODE or SYSTEM_MODE instead of 'with sharing' or 'without sharing'.",
+          "example_violation": "Implicit 'with sharing' or 'without sharing'",
+          "example_fix": "Use explicit USER_MODE or SYSTEM_MODE"
+        },
+        {
+          "id": "bulkify-operations",
+          "severity": "error",
+          "description": "All Apex code must be bulkified to handle large data volumes without hitting governor limits.",
+          "pattern": "Always design Apex code to handle bulk operations (200+ records).",
+          "example_violation": "Apex code not bulkified",
+          "example_fix": "Design Apex code for bulk operations"
+        },
+        {
+          "id": "use-application-factory",
+          "severity": "warning",
+          "description": "Use Application.Service.newInstance(), Application.Domain.newInstance(), etc. for consistent object creation.",
+          "pattern": "Always use Application Factory pattern for instantiating Service, Domain, and Selector classes.",
+          "example_violation": "Manual object instantiation",
+          "example_fix": "Use Application Factory"
+        },
+        {
+          "id": "proper-exception-handling",
+          "severity": "warning",
+          "description": "Catch and handle exceptions appropriately with user-friendly error messages.",
+          "pattern": "Always implement proper exception handling with meaningful error messages.",
+          "example_violation": "Missing error handling",
+          "example_fix": "Implement proper exception handling"
+        },
+        {
+          "id": "use-constants",
+          "severity": "warning",
+          "description": "Define constants for all hardcoded values to improve maintainability and reduce errors.",
+          "pattern": "Always use constants for hardcoded values, field names, and error messages.",
+          "example_violation": "Hardcoded values",
+          "example_fix": "Define constants"
+        },
+        {
+          "id": "meaningful-variable-names",
+          "severity": "warning",
+          "description": "Variable names should clearly indicate their purpose and follow Salesforce naming conventions.",
+          "pattern": "Always use meaningful and descriptive variable names following camelCase convention.",
+          "example_violation": "Unclear variable names",
+          "example_fix": "Use meaningful variable names"
+        },
+        {
+          "id": "test-data-factory",
+          "severity": "warning",
+          "description": "Create reusable test data factories to ensure consistent and maintainable test data creation.",
+          "pattern": "Always use Test Data Factory pattern for creating test data.",
+          "example_violation": "Manual test data creation",
+          "example_fix": "Use Test Data Factory"
+        },
+        {
+          "id": "use-apex-mocks",
+          "severity": "warning",
+          "description": "Use ApexMocks to create proper unit tests with mocked dependencies.",
+          "pattern": "Always use ApexMocks for unit testing of enterprise patterns.",
+          "example_violation": "Testing without mocking",
+          "example_fix": "Use ApexMocks"
+        },
+        {
+          "id": "no-test-data-dependencies",
+          "severity": "error",
+          "description": "All tests must create their own test data to ensure reliability across different environments.",
+          "pattern": "Never create tests that depend on existing org data.",
+          "example_violation": "Tests depending on org data",
+          "example_fix": "Create tests with their own test data"
+        },
+        {
+          "id": "separation-of-concerns",
+          "severity": "error",
+          "description": "Each layer should have a single, well-defined responsibility.",
+          "pattern": "Always maintain proper separation of concerns: Controllers for UI, Services for orchestration, Domains for business logic, Selectors for data access.",
+          "example_violation": "Mixing responsibilities",
+          "example_fix": "Maintain proper separation of concerns"
+        },
+        {
+          "id": "api_callout_limits",
+          "severity": "error",
+          "description": "Respect Salesforce callout limits: 100 HTTP requests per transaction, 10 second timeout",
+          "pattern": "Batch API calls and use asynchronous processing for bulk operations",
+          "example_violation": "Making >100 API calls in a single transaction",
+          "example_fix": "Implement batch processing with Queueable for large volumes"
+        }
+      ]
+    },
+    "security": {
+      "description": "Security and access control",
+      "rules": [
+        {
+          "id": "no-business-logic-in-triggers",
+          "severity": "error",
+          "description": "Triggers should only contain delegation logic to Domain classes. All business logic must be implemented in Domain classes extending fflib_SObjectDomain.",
+          "pattern": "Never place business logic directly inside Apex Triggers. Always delegate to Domain classes.",
+          "example_violation": "Business logic directly in triggers",
+          "example_fix": "Delegate business logic to Domain classes"
+        },
+        {
+          "id": "use-domain-pattern",
+          "severity": "error",
+          "description": "Create Domain classes for each SObject to encapsulate business logic and validation rules.",
+          "pattern": "Always use Domain classes extending fflib_SObjectDomain for business logic and validation.",
+          "example_violation": "Business logic directly in triggers or selectors",
+          "example_fix": "Implement business logic in Domain classes"
+        },
+        {
+          "id": "use-selector-pattern",
+          "severity": "error",
+          "description": "Never write SOQL queries directly in business logic. Create Selector classes for centralized data access.",
+          "pattern": "Always encapsulate SOQL queries in Selector classes extending fflib_SObjectSelector.",
+          "example_violation": "SOQL queries directly in business logic",
+          "example_fix": "Encapsulate SOQL queries in Selector classes"
+        },
+        {
+          "id": "use-service-pattern",
+          "severity": "warning",
+          "description": "Create Service classes to orchestrate business operations that span multiple SObjects or require complex logic.",
+          "pattern": "Always orchestrate complex business operations through Service classes.",
+          "example_violation": "Complex business logic directly in triggers or selectors",
+          "example_fix": "Delegate complex logic to Service classes"
+        },
+        {
+          "id": "use-unit-of-work",
+          "severity": "error",
+          "description": "Use Unit of Work pattern for all DML operations to ensure proper transaction management and bulkification.",
+          "pattern": "Always use fflib_SObjectUnitOfWork for DML operations to manage transactions and bulkification.",
+          "example_violation": "DML operations directly in triggers or selectors",
+          "example_fix": "Use fflib_SObjectUnitOfWork"
+        },
+        {
+          "id": "no-soql-dml-in-loops",
+          "severity": "error",
+          "description": "SOQL and DML inside loops will cause governor limit exceptions. Use bulkification patterns instead.",
+          "pattern": "Never place SOQL queries or DML operations inside loops to avoid governor limits.",
+          "example_violation": "SOQL/DML in loops",
+          "example_fix": "Use bulkification patterns"
+        },
+        {
+          "id": "use-user-system-mode",
+          "severity": "warning",
+          "description": "Use dataAccess constructors with explicit USER_MODE or SYSTEM_MODE for better performance and clearer intent.",
+          "pattern": "Always use explicit USER_MODE or SYSTEM_MODE instead of 'with sharing' or 'without sharing'.",
+          "example_violation": "Implicit 'with sharing' or 'without sharing'",
+          "example_fix": "Use explicit USER_MODE or SYSTEM_MODE"
+        },
+        {
+          "id": "bulkify-operations",
+          "severity": "error",
+          "description": "All Apex code must be bulkified to handle large data volumes without hitting governor limits.",
+          "pattern": "Always design Apex code to handle bulk operations (200+ records).",
+          "example_violation": "Apex code not bulkified",
+          "example_fix": "Design Apex code for bulk operations"
+        },
+        {
+          "id": "proper-exception-handling",
+          "severity": "warning",
+          "description": "Catch and handle exceptions appropriately with user-friendly error messages.",
+          "pattern": "Always implement proper exception handling with meaningful error messages.",
+          "example_violation": "Missing error handling",
+          "example_fix": "Implement proper exception handling"
+        },
+        {
+          "id": "use-constants",
+          "severity": "warning",
+          "description": "Define constants for all hardcoded values to improve maintainability and reduce errors.",
+          "pattern": "Always use constants for hardcoded values, field names, and error messages.",
+          "example_violation": "Hardcoded values",
+          "example_fix": "Define constants"
+        },
+        {
+          "id": "meaningful-variable-names",
+          "severity": "warning",
+          "description": "Variable names should clearly indicate their purpose and follow Salesforce naming conventions.",
+          "pattern": "Always use meaningful and descriptive variable names following camelCase convention.",
+          "example_violation": "Unclear variable names",
+          "example_fix": "Use meaningful variable names"
+        },
+        {
+          "id": "test-data-factory",
+          "severity": "warning",
+          "description": "Create reusable test data factories to ensure consistent and maintainable test data creation.",
+          "pattern": "Always use Test Data Factory pattern for creating test data.",
+          "example_violation": "Manual test data creation",
+          "example_fix": "Use Test Data Factory"
+        },
+        {
+          "id": "use-apex-mocks",
+          "severity": "warning",
+          "description": "Use ApexMocks to create proper unit tests with mocked dependencies.",
+          "pattern": "Always use ApexMocks for unit testing of enterprise patterns.",
+          "example_violation": "Testing without mocking",
+          "example_fix": "Use ApexMocks"
+        },
+        {
+          "id": "no-test-data-dependencies",
+          "severity": "error",
+          "description": "All tests must create their own test data to ensure reliability across different environments.",
+          "pattern": "Never create tests that depend on existing org data.",
+          "example_violation": "Tests depending on org data",
+          "example_fix": "Create tests with their own test data"
+        },
+        {
+          "id": "separation-of-concerns",
+          "severity": "error",
+          "description": "Each layer should have a single, well-defined responsibility.",
+          "pattern": "Always maintain proper separation of concerns: Controllers for UI, Services for orchestration, Domains for business logic, Selectors for data access.",
+          "example_violation": "Mixing responsibilities",
+          "example_fix": "Maintain proper separation of concerns"
+        },
+        {
+          "id": "api_credential_security",
+          "severity": "error",
+          "description": "API credentials must be stored in Protected Custom Settings, Custom Metadata, or Named Credentials",
+          "pattern": "Use Salesforce secure storage mechanisms for sensitive API configuration",
+          "example_violation": "Storing API keys in regular Custom Settings or hardcoded in classes",
+          "example_fix": "Use Protected Custom Settings or Named Credentials for API authentication"
+        }
+      ]
+    },
+    "testing": {
+      "description": "Testing patterns and requirements",
+      "rules": [
+        {
+          "id": "no-business-logic-in-triggers",
+          "severity": "error",
+          "description": "Triggers should only contain delegation logic to Domain classes. All business logic must be implemented in Domain classes extending fflib_SObjectDomain.",
+          "pattern": "Never place business logic directly inside Apex Triggers. Always delegate to Domain classes.",
+          "example_violation": "Business logic directly in triggers",
+          "example_fix": "Delegate business logic to Domain classes"
+        },
+        {
+          "id": "use-domain-pattern",
+          "severity": "error",
+          "description": "Create Domain classes for each SObject to encapsulate business logic and validation rules.",
+          "pattern": "Always use Domain classes extending fflib_SObjectDomain for business logic and validation.",
+          "example_violation": "Business logic directly in triggers or selectors",
+          "example_fix": "Implement business logic in Domain classes"
+        },
+        {
+          "id": "use-selector-pattern",
+          "severity": "error",
+          "description": "Never write SOQL queries directly in business logic. Create Selector classes for centralized data access.",
+          "pattern": "Always encapsulate SOQL queries in Selector classes extending fflib_SObjectSelector.",
+          "example_violation": "SOQL queries directly in business logic",
+          "example_fix": "Encapsulate SOQL queries in Selector classes"
+        },
+        {
+          "id": "use-service-pattern",
+          "severity": "warning",
+          "description": "Create Service classes to orchestrate business operations that span multiple SObjects or require complex logic.",
+          "pattern": "Always orchestrate complex business operations through Service classes.",
+          "example_violation": "Complex business logic directly in triggers or selectors",
+          "example_fix": "Delegate complex logic to Service classes"
+        },
+        {
+          "id": "use-unit-of-work",
+          "severity": "error",
+          "description": "Use Unit of Work pattern for all DML operations to ensure proper transaction management and bulkification.",
+          "pattern": "Always use fflib_SObjectUnitOfWork for DML operations to manage transactions and bulkification.",
+          "example_violation": "DML operations directly in triggers or selectors",
+          "example_fix": "Use fflib_SObjectUnitOfWork"
+        },
+        {
+          "id": "no-soql-dml-in-loops",
+          "severity": "error",
+          "description": "SOQL and DML inside loops will cause governor limit exceptions. Use bulkification patterns instead.",
+          "pattern": "Never place SOQL queries or DML operations inside loops to avoid governor limits.",
+          "example_violation": "SOQL/DML in loops",
+          "example_fix": "Use bulkification patterns"
+        },
+        {
+          "id": "use-user-system-mode",
+          "severity": "warning",
+          "description": "Use dataAccess constructors with explicit USER_MODE or SYSTEM_MODE for better performance and clearer intent.",
+          "pattern": "Always use explicit USER_MODE or SYSTEM_MODE instead of 'with sharing' or 'without sharing'.",
+          "example_violation": "Implicit 'with sharing' or 'without sharing'",
+          "example_fix": "Use explicit USER_MODE or SYSTEM_MODE"
+        },
+        {
+          "id": "bulkify-operations",
+          "severity": "error",
+          "description": "All Apex code must be bulkified to handle large data volumes without hitting governor limits.",
+          "pattern": "Always design Apex code to handle bulk operations (200+ records).",
+          "example_violation": "Apex code not bulkified",
+          "example_fix": "Design Apex code for bulk operations"
+        },
+        {
+          "id": "proper-exception-handling",
+          "severity": "warning",
+          "description": "Catch and handle exceptions appropriately with user-friendly error messages.",
+          "pattern": "Always implement proper exception handling with meaningful error messages.",
+          "example_violation": "Missing error handling",
+          "example_fix": "Implement proper exception handling"
+        },
+        {
+          "id": "use-constants",
+          "severity": "warning",
+          "description": "Define constants for all hardcoded values to improve maintainability and reduce errors.",
+          "pattern": "Always use constants for hardcoded values, field names, and error messages.",
+          "example_violation": "Hardcoded values",
+          "example_fix": "Define constants"
+        },
+        {
+          "id": "meaningful-variable-names",
+          "severity": "warning",
+          "description": "Variable names should clearly indicate their purpose and follow Salesforce naming conventions.",
+          "pattern": "Always use meaningful and descriptive variable names following camelCase convention.",
+          "example_violation": "Unclear variable names",
+          "example_fix": "Use meaningful variable names"
+        },
+        {
+          "id": "test-data-factory",
+          "severity": "warning",
+          "description": "Create reusable test data factories to ensure consistent and maintainable test data creation.",
+          "pattern": "Always use Test Data Factory pattern for creating test data.",
+          "example_violation": "Manual test data creation",
+          "example_fix": "Use Test Data Factory"
+        },
+        {
+          "id": "use-apex-mocks",
+          "severity": "warning",
+          "description": "Use ApexMocks to create proper unit tests with mocked dependencies.",
+          "pattern": "Always use ApexMocks for unit testing of enterprise patterns.",
+          "example_violation": "Testing without mocking",
+          "example_fix": "Use ApexMocks"
+        },
+        {
+          "id": "no-test-data-dependencies",
+          "severity": "error",
+          "description": "All tests must create their own test data to ensure reliability across different environments.",
+          "pattern": "Never create tests that depend on existing org data.",
+          "example_violation": "Tests depending on org data",
+          "example_fix": "Create tests with their own test data"
+        },
+        {
+          "id": "separation-of-concerns",
+          "severity": "error",
+          "description": "Each layer should have a single, well-defined responsibility.",
+          "pattern": "Always maintain proper separation of concerns: Controllers for UI, Services for orchestration, Domains for business logic, Selectors for data access.",
+          "example_violation": "Mixing responsibilities",
+          "example_fix": "Maintain proper separation of concerns"
+        },
+        {
+          "id": "api_mock_testing",
+          "severity": "error",
+          "description": "External API integrations must be tested using mock implementations, never real API calls",
+          "pattern": "Create mock classes that extend generated API clients for testing",
+          "example_violation": "Test methods that make actual HTTP callouts to external APIs",
+          "example_fix": "Implement MockOASPetApi pattern with configurable test data"
+        },
+        {
+          "id": "domain-unit-tests",
+          "severity": "error",
+          "description": "Domain classes must have comprehensive unit tests that cover all business logic without DML",
+          "pattern": "Create unit tests for Domain classes using ApexMocks, focusing on business logic validation",
+          "example_violation": "Domain class tests using DML operations",
+          "example_fix": "Use ApexMocks to test Domain logic without DML"
+        },
+        {
+          "id": "service-mock-dependencies",
+          "severity": "error",
+          "description": "Service class tests must mock all dependencies using ApexMocks and Application.setMock()",
+          "pattern": "Mock all dependencies (UnitOfWork, Selectors, other Services) in service tests",
+          "example_violation": "Service tests without mocked dependencies",
+          "example_fix": "Use Application.setMock() for all dependencies"
+        },
+        {
+          "id": "selector-query-testing",
+          "severity": "warning",
+          "description": "Selector classes should test query structure without executing queries",
+          "pattern": "Test selector methods by validating generated SOQL query structure",
+          "example_violation": "Testing selectors with actual database queries",
+          "example_fix": "Test query structure using newQueryFactory().toSOQL()"
+        },
+        {
+          "id": "test-class-naming",
+          "severity": "warning",
+          "description": "Test classes must follow naming convention: [ClassBeingTested]Test",
+          "pattern": "Always append 'Test' to the class name being tested",
+          "example_violation": "AccountDomainTestClass or TestAccountDomain",
+          "example_fix": "AccountDomainTest"
+        },
+        {
+          "id": "test-method-naming",
+          "severity": "warning",
+          "description": "Test methods must use descriptive names indicating what is being tested",
+          "pattern": "Use pattern: [methodName][condition]Test (e.g., validateCreditRatingSuccessTest)",
+          "example_violation": "testMethod1() or test1()",
+          "example_fix": "validateCreditRatingWithHighRevenueTest()"
+        },
+        {
+          "id": "test-coverage-meaningful",
+          "severity": "warning",
+          "description": "Focus on meaningful coverage of business logic rather than percentage coverage",
+          "pattern": "Test decision points, calculations, validation rules, and error scenarios",
+          "example_violation": "Tests that only call methods without assertions",
+          "example_fix": "Test specific business logic with proper assertions"
+        },
+        {
+          "id": "test-bulk-operations",
+          "severity": "error",
+          "description": "Test classes must verify bulk operation handling (200+ records)",
+          "pattern": "Include at least one test method that processes 200+ records",
+          "example_violation": "Tests with only single records",
+          "example_fix": "Add bulk testing with TestDataFactory.createAccounts(200)"
+        },
+        {
+          "id": "test-exception-handling",
+          "severity": "warning",
+          "description": "Test classes must verify proper exception handling and error messages",
+          "pattern": "Test negative scenarios and exception paths with proper assertions",
+          "example_violation": "No negative testing or exception verification",
+          "example_fix": "Add try-catch blocks to verify expected exceptions"
+        },
+        {
+          "id": "test-governor-limits",
+          "severity": "warning",
+          "description": "Performance tests should validate governor limit compliance",
+          "pattern": "Monitor SOQL, DML, and CPU limits before and after operations",
+          "example_violation": "No governor limit validation",
+          "example_fix": "Use Limits.getQueries() to validate efficient resource usage"
+        },
+        {
+          "id": "integration-test-minimal",
+          "severity": "warning",
+          "description": "Use minimal integration tests only for trigger coverage and deployment validation",
+          "pattern": "One integration test per trigger or class requiring DML",
+          "example_violation": "All tests using DML operations",
+          "example_fix": "Use unit tests for business logic, integration tests for triggers only"
+        },
+        {
+          "id": "test-data-relationships",
+          "severity": "warning",
+          "description": "Use fflib_ApexMocksUtils.makeRelationship() for parent-child relationships in tests",
+          "pattern": "Create object relationships using ApexMocks utilities",
+          "example_violation": "Manual relationship creation in tests",
+          "example_fix": "Use fflib_ApexMocksUtils.makeRelationship()"
+        }
+      ]
+    },
+    "architecture": {
+      "description": "Code organization and architectural principles",
+      "rules": [
+        {
+          "id": "no-business-logic-in-triggers",
+          "severity": "error",
+          "description": "Triggers should only contain delegation logic to Domain classes. All business logic must be implemented in Domain classes extending fflib_SObjectDomain.",
+          "pattern": "Never place business logic directly inside Apex Triggers. Always delegate to Domain classes.",
+          "example_violation": "Business logic directly in triggers",
+          "example_fix": "Delegate business logic to Domain classes"
+        },
+        {
+          "id": "use-domain-pattern",
+          "severity": "error",
+          "description": "Create Domain classes for each SObject to encapsulate business logic and validation rules.",
+          "pattern": "Always use Domain classes extending fflib_SObjectDomain for business logic and validation.",
+          "example_violation": "Business logic directly in triggers or selectors",
+          "example_fix": "Implement business logic in Domain classes"
+        },
+        {
+          "id": "use-selector-pattern",
+          "severity": "error",
+          "description": "Never write SOQL queries directly in business logic. Create Selector classes for centralized data access.",
+          "pattern": "Always encapsulate SOQL queries in Selector classes extending fflib_SObjectSelector.",
+          "example_violation": "SOQL queries directly in business logic",
+          "example_fix": "Encapsulate SOQL queries in Selector classes"
+        },
+        {
+          "id": "use-service-pattern",
+          "severity": "warning",
+          "description": "Create Service classes to orchestrate business operations that span multiple SObjects or require complex logic.",
+          "pattern": "Always orchestrate complex business operations through Service classes.",
+          "example_violation": "Complex business logic directly in triggers or selectors",
+          "example_fix": "Delegate complex logic to Service classes"
+        },
+        {
+          "id": "use-unit-of-work",
+          "severity": "error",
+          "description": "Use Unit of Work pattern for all DML operations to ensure proper transaction management and bulkification.",
+          "pattern": "Always use fflib_SObjectUnitOfWork for DML operations to manage transactions and bulkification.",
+          "example_violation": "DML operations directly in triggers or selectors",
+          "example_fix": "Use fflib_SObjectUnitOfWork"
+        },
+        {
+          "id": "no-soql-dml-in-loops",
+          "severity": "error",
+          "description": "SOQL and DML inside loops will cause governor limit exceptions. Use bulkification patterns instead.",
+          "pattern": "Never place SOQL queries or DML operations inside loops to avoid governor limits.",
+          "example_violation": "SOQL/DML in loops",
+          "example_fix": "Use bulkification patterns"
+        },
+        {
+          "id": "use-user-system-mode",
+          "severity": "warning",
+          "description": "Use dataAccess constructors with explicit USER_MODE or SYSTEM_MODE for better performance and clearer intent.",
+          "pattern": "Always use explicit USER_MODE or SYSTEM_MODE instead of 'with sharing' or 'without sharing'.",
+          "example_violation": "Implicit 'with sharing' or 'without sharing'",
+          "example_fix": "Use explicit USER_MODE or SYSTEM_MODE"
+        },
+        {
+          "id": "bulkify-operations",
+          "severity": "error",
+          "description": "All Apex code must be bulkified to handle large data volumes without hitting governor limits.",
+          "pattern": "Always design Apex code to handle bulk operations (200+ records).",
+          "example_violation": "Apex code not bulkified",
+          "example_fix": "Design Apex code for bulk operations"
+        },
+        {
+          "id": "proper-exception-handling",
+          "severity": "warning",
+          "description": "Catch and handle exceptions appropriately with user-friendly error messages.",
+          "pattern": "Always implement proper exception handling with meaningful error messages.",
+          "example_violation": "Missing error handling",
+          "example_fix": "Implement proper exception handling"
+        },
+        {
+          "id": "use-constants",
+          "severity": "warning",
+          "description": "Define constants for all hardcoded values to improve maintainability and reduce errors.",
+          "pattern": "Always use constants for hardcoded values, field names, and error messages.",
+          "example_violation": "Hardcoded values",
+          "example_fix": "Define constants"
+        },
+        {
+          "id": "meaningful-variable-names",
+          "severity": "warning",
+          "description": "Variable names should clearly indicate their purpose and follow Salesforce naming conventions.",
+          "pattern": "Always use meaningful and descriptive variable names following camelCase convention.",
+          "example_violation": "Unclear variable names",
+          "example_fix": "Use meaningful variable names"
+        },
+        {
+          "id": "test-data-factory",
+          "severity": "warning",
+          "description": "Create reusable test data factories to ensure consistent and maintainable test data creation.",
+          "pattern": "Always use Test Data Factory pattern for creating test data.",
+          "example_violation": "Manual test data creation",
+          "example_fix": "Use Test Data Factory"
+        },
+        {
+          "id": "use-apex-mocks",
+          "severity": "warning",
+          "description": "Use ApexMocks to create proper unit tests with mocked dependencies.",
+          "pattern": "Always use ApexMocks for unit testing of enterprise patterns.",
+          "example_violation": "Testing without mocking",
+          "example_fix": "Use ApexMocks"
+        },
+        {
+          "id": "no-test-data-dependencies",
+          "severity": "error",
+          "description": "All tests must create their own test data to ensure reliability across different environments.",
+          "pattern": "Never create tests that depend on existing org data.",
+          "example_violation": "Tests depending on org data",
+          "example_fix": "Create tests with their own test data"
+        },
+        {
+          "id": "separation-of-concerns",
+          "severity": "error",
+          "description": "Each layer should have a single, well-defined responsibility.",
+          "pattern": "Always maintain proper separation of concerns: Controllers for UI, Services for orchestration, Domains for business logic, Selectors for data access.",
+          "example_violation": "Mixing responsibilities",
+          "example_fix": "Maintain proper separation of concerns"
+        },
+        {
+          "id": "lwc_component_responsibility",
+          "severity": "warning",
+          "description": "LWC components should have single responsibility and be reusable",
+          "pattern": "Components should focus on one specific UI concern",
+          "example_violation": "Mixing data access, UI logic, and business logic in one component",
+          "example_fix": "Separate into focused components with clear responsibilities"
+        },
+        {
+          "id": "lwc_naming_conventions",
+          "severity": "info",
+          "description": "Follow LWC naming conventions: camelCase, descriptive names",
+          "pattern": "Component names: myComponent, property names: recordId, method names: handleClick",
+          "example_violation": "PascalCase or unclear names",
+          "example_fix": "Use camelCase and descriptive names"
+        },
+        {
+          "id": "api_separation_concerns",
+          "severity": "error",
+          "description": "External API integration logic must be separated from business logic and data access",
+          "pattern": "API calls belong in Service layer, data transformation in separate utility classes",
+          "example_violation": "Mixing API calls with business logic in the same method",
+          "example_fix": "Separate API integration, data transformation, and business logic into distinct layers"
+        }
+      ]
+    }
+  },
+  "enforcement_levels": {
+    "error": "Must be fixed before deployment",
+    "warning": "Should be addressed for best practices",
+    "info": "Consider for optimization and maintainability"
+  },
+  "integration": {
+    "cursor_ide": {
+      "enabled": true,
+      "real_time_checking": true,
+      "auto_suggestions": true
+    },
+    "eslint": {
+      "extends": ["@salesforce/eslint-config-lwc"],
+      "custom_rules": "Map rule IDs to ESLint rule configurations"
+    },
+    "pre_commit_hooks": {
+      "enabled": true,
+      "blocking_rules": ["error"],
+      "warning_rules": ["warning"]
+    }
+  }
+} 
