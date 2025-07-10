@@ -6,7 +6,7 @@ This project demonstrates how to create reusable AI development tools for Salesf
 ## 📁 Project Structure
 
 ```
-fire-crawl/
+salesforce-ai-toolkit/
 ├── sfdx-project.json              # Salesforce DX project configuration
 ├── .forceignore                   # Deployment ignore patterns
 ├── package.xml                    # Metadata manifest
